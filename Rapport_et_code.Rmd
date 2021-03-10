@@ -12,8 +12,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-
 ## Présentation des données:
+
+![Dugong ou vache marine](dugong.jpg)
+
+Tout d'abord pour la culture, le Dugong est un mammiphère sous-marin herbivore aussi nommé vache sous-marine. Il vit sur les littoraux des océans Indiens et Pacifique. Il en reste aujourd'hui moins de 40 000. \
+
+Les données se présentent sous la forme d'un tableau à deux entrées. L'entrée X représente l'âge des 27 dugongs et l'entrée Y leurs tailles.
+On propose dans ce projet de construire un modèle bayésien pour modèliser la taille des dugongs en fonction de leur âge.
 
 
 
@@ -26,3 +32,72 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## Codes:
+Initialisation des données
+
+```{r}
+
+"X" <-
+c(1, 1.5, 1.5, 1.5, 2.5, 4, 5, 5, 7, 8, 8.5, 9, 9.5, 9.5, 10, 
+12, 12, 13, 13, 14.5, 15.5, 15.5, 16.5, 17, 22.5, 29, 31.5)
+
+"Y" <-
+c(1.8, 1.85, 1.87, 1.77, 2.02, 2.27, 2.15, 2.26, 2.47, 2.19, 
+2.26, 2.4, 2.39, 2.41, 2.5, 2.32, 2.32, 2.43, 2.47, 2.56, 2.65, 
+2.47, 2.64, 2.56, 2.7, 2.72, 2.57)
+
+
+```
+
+```{r}
+
+
+dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){
+
+  init <- c(0, 1, 0.5, 1)  #alpha, beta, gamma (entre 0 et 1)  et tau (standard deviation donc on commenc à 1)
+  chain <- matrix(NA, nchain + 1, 4)
+  chain[1,] <- init
+  acc_rates <- rep(0, 4)
+  
+  
+  
+  for (iter in 1:nchain){
+    current <- chain[iter,]
+    
+    for (j in 1:3){
+      ## Mise a jour de alpha, beta, gamma, tau 
+      
+      prop <- current
+      prop[j] <- rnorm(1, current[j], prop_sd[j])
+      
+      top <-   ###### math à faire
+      bottom <-   ###### math à faire
+      acc_prob <- exp(top - bottom)
+    
+      if (runif(1) < acc_prob){
+        current <- prop
+        acc_rates[j] <- acc_rates[j] + 1
+      }
+    }
+    
+    ## Sauvegardons le nouvel etat
+    chain[iter+1,] <- current
+  }
+  
+  return(list(chain = chain, acc_rates = acc_rates / nchain))
+}
+
+
+
+
+
+
+
+
+```
+
+
+
+## Sources
+
+https://www.wwf.fr/especes-prioritaires/dugong
+

@@ -1,0 +1,24 @@
+---
+title: "Projet-bayes"
+author: "Otmane EL ALOI"
+date: "10/03/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Présentation des données:
+
+
+
+```{r cars}
+summary(cars)
+```
+
+## Pseudos codes:
+
+
+
+## Codes:

@@ -1,6 +1,6 @@
 ---
-title: "Projet-bayes"
-author: "Otmane EL ALOI"
+title: "Projet BAYES - Dugongs: nonlinear growth curve"
+author: "CHFAIRA Hajar - El ALOI Otmane - FRECON Gauthier - METTALI Bechir "
 date: "10/03/2021"
 output: html_document
 ---
@@ -9,12 +9,16 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+
+
+
 ## Présentation des données:
 
 
 
 ```{r cars}
-summary(cars)
+
 ```
 
 ## Pseudos codes:

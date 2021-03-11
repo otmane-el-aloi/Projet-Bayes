@@ -7,46 +7,47 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
 ```
-
-
-
 
 ## Présentation des données:
 
 ![Dugong ou vache marine](dugong.jpg)
 
-Tout d'abord pour la culture, le Dugong est un mammiphère sous-marin herbivore aussi nommé vache sous-marine. Il vit sur les littoraux des océans Indiens et Pacifique. Il en reste aujourd'hui moins de 40 000. \
+Tout d'abord pour la culture, le Dugong est un mammiphère sous-marin herbivore aussi nommé vache sous-marine. Il vit sur les littoraux des océans Indiens et Pacifique. Il en reste aujourd'hui moins de 40 000.\
 
-Les données se présentent sous la forme d'un tableau à deux entrées. L'entrée X représente l'âge des 27 dugongs et l'entrée Y leurs tailles.
-On propose dans ce projet de construire un modèle bayésien pour modèliser la taille des dugongs en fonction de leur âge.
+Les données se présentent sous la forme d'un tableau à deux entrées. L'entrée X représente l'âge des 27 dugongs et l'entrée Y leurs tailles. On propose dans ce projet de construire un modèle bayésien pour modèliser la taille des dugongs en fonction de leur âge.
 
-
-
-```{r cars}
-
-```
-
-## Pseudos codes:
-
-
-
-## Codes:
-Initialisation des données
-
-```{r}
-
-"X" <-
-c(1, 1.5, 1.5, 1.5, 2.5, 4, 5, 5, 7, 8, 8.5, 9, 9.5, 9.5, 10, 
+```{r initialisation des données}
+X <- c(1, 1.5, 1.5, 1.5, 2.5, 4, 5, 5, 7, 8, 8.5, 9, 9.5, 9.5, 10, 
 12, 12, 13, 13, 14.5, 15.5, 15.5, 16.5, 17, 22.5, 29, 31.5)
 
-"Y" <-
-c(1.8, 1.85, 1.87, 1.77, 2.02, 2.27, 2.15, 2.26, 2.47, 2.19, 
+Y <- c(1.8, 1.85, 1.87, 1.77, 2.02, 2.27, 2.15, 2.26, 2.47, 2.19, 
 2.26, 2.4, 2.39, 2.41, 2.5, 2.32, 2.32, 2.43, 2.47, 2.56, 2.65, 
 2.47, 2.64, 2.56, 2.7, 2.72, 2.57)
 
+data <- data.frame(X,Y)
+
+ggplot(data,mapping = aes(X,Y))+
+  geom_point()+
+  geom_smooth()+
+  ggtitle("Evolution de la longueur des Dugongs en fonction de l'age") +
+  xlab("age") + ylab("Longeur")
 
 ```
+
+On remarque que l'evolution de la longeur ("The growth") et non linéaire.
+
+```{r Y distribution}
+y <- density(data$Y)
+plot(y)
+```
+
+En faisant l'estimation non paramétriques de la densité des valeurs de Y on retrouve une densité qui laisse penser qu'on a affaire à une somme de densité normale, d'où le choix de la modélisation suivante:
+
+(le modèle donnée en énoncé j'arrive pas à écrire en latex)
+
+## Codes:
 
 ```{r}
 
@@ -116,9 +117,6 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){
 
 ```
 
-
-
 ## Sources
 
-https://www.wwf.fr/especes-prioritaires/dugong
-
+<https://www.wwf.fr/especes-prioritaires/dugong>

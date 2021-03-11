@@ -39,6 +39,9 @@ ggplot(data,mapping = aes(X,Y))+
 On remarque que l'evolution de la longeur ("The growth") est non linéaire, et tend vers une valeur constante, ainsi on a choisi pour modèle de dépendance entre X(l'age) et Y(la longeur) un modèle de régression non linéaire appelé (asymptotic regression model) on trouve dans la littérature d'autres modèles similaire pour modéliser les courbes d'évolution :
 
 -   modified exponential (Stevens (1951), c'est le type de modèle employé essayé)
+$$
+\mathbb{E}(Y)=\alpha-\beta^{X}
+$$
 
 -   logistic (von Bertalanffy (1957) )
 
@@ -50,10 +53,58 @@ plot(y)
 ```
 
 En faisant l'estimation non paramétriques de la densité des valeurs de Y on retrouve une densité qui laisse penser qu'on a affaire à une somme de densité normale, d'où le choix de la modélisation suivante:
+$$
+Y_{i} \sim \operatorname{Normal}\left(\mu_{i}, \tau\right), \quad i=1, \ldots, 27$$
 
-(le modèle donnée en énoncé pour Y j'arrive pas à écrire en latex)
 
+$$\mu_{i}=\alpha-\beta \gamma^{X} \quad \alpha, \beta>1 ; 0<\gamma<1
+$$
+
+
+
+## Calculs
+$$
+\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\alpha)
+\\
+\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\\
+\pi(\alpha \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
+
+
+
+$$
+$$
+\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\beta)
+\\
+\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\\
+\pi(\beta \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
+
+
+
+$$
+$$
+\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\gamma)
+\\
+\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\\
+\pi(\gamma \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
+
+
+
+$$
+$$
+\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\gamma)
+\\
+\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\\
+\pi(\tau \mid \ldots) \propto  \tau^{-\frac{n}{2}}e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
+
+
+
+$$
 ## Codes:
+
 
 ```{r}
 

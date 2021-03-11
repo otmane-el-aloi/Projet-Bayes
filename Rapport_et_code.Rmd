@@ -121,9 +121,9 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){
   for (iter in 1:nchain){
     current <- chain[iter,]
     
-    ## Mise a jour de alpha, beta, tau (ils suivent la même loi a priori )
+    ## Mise a jour de alpha, beta, tau et gamma (ils suivent la même loi a priori )
     
-    for (j in 1:3){
+    for (j in 1:4){
 
       
       prop <- current
@@ -137,20 +137,6 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){
         current <- prop
         acc_rates[j] <- acc_rates[j] + 1
       }
-    }
-    
-    ## Mise à jour de gamma qui suit une loi a priori uniforme 
-    
-    prop <- current
-    prop[4] <- rnorm(1, current[], prop_sd[4])
-    
-    top <-   ###### math à faire
-    bottom <-   ###### math à faire
-    acc_prob <- exp(top - bottom)
-  
-    if (runif(1) < acc_prob){
-      current <- prop
-      acc_rates[4] <- acc_rates[4] + 1
     }
     
     

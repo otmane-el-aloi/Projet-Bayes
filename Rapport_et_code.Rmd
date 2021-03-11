@@ -36,7 +36,7 @@ ggplot(data,mapping = aes(X,Y))+
 
 ```
 
-On remarque que l'evolution de la longeur ("The growth") est non linéaire, et tend vers une valeur constante, ainsi on a choisi pour modèle de dépendance entre X(l'age) et Y(la longeur) un modèle de régression non linéaire appelé (asymptotic regression model) on trouve dans la littérature d'autres modèles similaire pour modéliser les courbes d'évolution :
+On remarque que l'évolution de la longeur ("The growth") est non linéaire, et tend vers une valeur constante, ainsi on a choisi pour modèle de dépendance entre X(l'age) et Y(la longeur) un modèle de régression non linéaire appelé (asymptotic regression model) on trouve dans la littérature d'autres modèles similaire pour modéliser les courbes d'évolution :
 
 -   modified exponential (Stevens (1951), c'est le type de modèle employé essayé)
 
@@ -55,7 +55,7 @@ En faisant l'estimation non paramétriques de la densité des valeurs de Y on re
 
 ## Codes:
 
-```{r}
+```{r model}
 
 
 dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){

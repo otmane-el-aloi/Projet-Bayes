@@ -36,7 +36,13 @@ ggplot(data,mapping = aes(X,Y))+
 
 ```
 
-On remarque que l'evolution de la longeur ("The growth") et non linéaire.
+On remarque que l'evolution de la longeur ("The growth") est non linéaire, et tend vers une valeur constante, ainsi on a choisi pour modèle de dépendance entre X(l'age) et Y(la longeur) un modèle de régression non linéaire appelé (asymptotic regression model) on trouve dans la littérature d'autres modèles similaire pour modéliser les courbes d'évolution :
+
+-   modified exponential (Stevens (1951), c'est le type de modèle employé essayé)
+
+-   logistic (von Bertalanffy (1957) )
+
+-   Gomprtz (Richards (1959). )
 
 ```{r Y distribution}
 y <- density(data$Y)
@@ -45,7 +51,7 @@ plot(y)
 
 En faisant l'estimation non paramétriques de la densité des valeurs de Y on retrouve une densité qui laisse penser qu'on a affaire à une somme de densité normale, d'où le choix de la modélisation suivante:
 
-(le modèle donnée en énoncé j'arrive pas à écrire en latex)
+(le modèle donnée en énoncé pour Y j'arrive pas à écrire en latex)
 
 ## Codes:
 

@@ -19,7 +19,7 @@ Tout d'abord pour la culture, le Dugong est un mammiphère sous-marin herbivore 
 Les données se présentent sous la forme d'un tableau à deux entrées. L'entrée X représente l'âge des 27 dugongs et l'entrée Y leurs tailles. On propose dans ce projet de construire un modèle bayésien pour modèliser la taille des dugongs en fonction de leur âge.
 
 ```{r initialisation des données}
-X <- c(1, 1.5, 1.5, 1.5, 2.5, 4, 5, 5, 7, 8, 8.5, 9, 9.5, 9.5, 10, 
+X <- c(, 1.5, 1.5, 1.5, 2.5, 4, 5, 5, 7, 8, 8.5, 9, 9.5, 9.5, 10, 
 12, 12, 13, 13, 14.5, 15.5, 15.5, 16.5, 17, 22.5, 29, 31.5)
 
 Y <- c(1.8, 1.85, 1.87, 1.77, 2.02, 2.27, 2.15, 2.26, 2.47, 2.19, 

@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
+install.packages("truncnorm")
+library(truncnorm)
 ```
 
 ## Présentation des données:
@@ -109,17 +111,19 @@ $$
 ```{r}
 
 
-dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){
+dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
 
-  init <- c(0, 1, 1, 0.5)  #alpha, beta, tau (standard deviation donc on commence à 1) et gamma (entre 0 et 1 donc on prend 0.5)   
+  init <- c(3, 2, 1, 0.1)  #alpha, beta (alpha et beta superieur à 1), tau (standard deviation donc on commence à 1) et gamma (entre 0 et 1 donc on prend 0.5)   
   chain <- matrix(NA, nchain + 1, 4)
   chain[1,] <- init
   acc_rates <- rep(0, 4)
   
+  valeur_extreme_params =cbind(c(1,1, 0.01,0),c(10^5,10^5,10^5,1 ))
   
   
   for (iter in 1:nchain){
     current <- chain[iter,]
+
     
     ## Mise a jour de alpha, beta, tau et gamma (ils suivent la même loi a priori )
     
@@ -127,12 +131,16 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){
 
       
       prop <- current
-      prop[j] <- rnorm(1, current[j], prop_sd[j])
+      prop[j] <- rtruncnorm(1, a=valeur_extreme_params[j,1] , b=valeur_extreme_params[j,2] , current[j], prop_sd[j])
+      bottom_kernel <- dtruncnorm(prop[j], a=valeur_extreme_params[j,1] , b=valeur_extreme_params[j,2] , current[j], prop_sd[j])  #on a pas un noyau symetrique !
+      top_kernel <- dtruncnorm(current[j], a=valeur_extreme_params[j,1] , b=valeur_extreme_params[j,2] , prop[j], prop_sd[j]) #on a pas un noyau symetrique !
       
-      top <-   ###### math à faire
-      bottom <-   ###### math à faire
+      
+      top <-   sum( 0.5*log(prop[3]) - 0.5*(length - prop[1] - prop[2]*prop[4]^age)^2 * prop[3] ) + top_kernel
+      bottom <-  sum( 0.5*log(current[3]) - 0.5*(length -current[1] - current[2]*current[4]^age)^2 *current[3]) + bottom_kernel
       acc_prob <- exp(top - bottom)
-    
+      
+
       if (runif(1) < acc_prob){
         current <- prop
         acc_rates[j] <- acc_rates[j] + 1
@@ -152,10 +160,20 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(1,1,1,1)){
 }
 
 
+nchain=10000
+CM_params <- dugong(x, Y, nchain )
+
+head(CM_params$chain,5)
+CM_params$acc_rates
 
 
+#CM_params
+## to do remove burning period
 
 
+#plot
+for (j in 1:4)
+  plot(CM_params$chain[,j], type = "l", ylab = j)
 
 
 ```

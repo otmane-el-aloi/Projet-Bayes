@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
-install.packages("truncnorm")
+#install.packages("truncnorm")
 library(truncnorm)
 ```
 
@@ -65,60 +65,58 @@ $$
 
 
 ## Calculs
-$$
-\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\alpha)
-\\
-\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
-\\
-\pi(\alpha \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
 
 $$
+\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\alpha)\\
+
+\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{\frac{1}{2}} e^{-\tau\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2}}\right]\\
+
+\pi(\alpha \mid \ldots) \propto  e^{-\frac{\tau\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2}}
+$$
+
+
+
+
 $$
 \pi(\beta \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\beta)
 \\
-\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{\frac{1}{2}}e^{-\tau\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2}}\right]
 \\
-\pi(\beta \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
-
+\pi(\beta \mid \ldots) \propto  e^{-\frac{\tau\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2}}
 $$
+
+
 $$
 \pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\gamma)
 \\
-\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{\frac{1}{2}}e^{-\tau\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2}}\right]
 \\
-\pi(\gamma \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
-
+\pi(\gamma \mid \ldots) \propto  e^{-\frac{\tau\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2}}
 $$
+
+
 $$
 \pi(\tau \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\gamma)
 \\
-\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{\frac{1}{2}}e^{-\tau\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2}}\right]
 \\
-\pi(\tau \mid \ldots) \propto  \tau^{-\frac{n}{2}}e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
-
+\pi(\tau \mid \ldots) \propto  \tau^{\frac{n}{2}}e^{-\frac{\tau\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2}}
 $$
+
 ## Codes:
 
 
 ```{r}
 
 
-dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
+dugong <- function(age, length, nchain = 10^4, prop_sd = c(2,6,2,2)){
 
   init <- c(3, 2, 1, 0.1)  #alpha, beta (alpha et beta superieur à 1), tau (standard deviation donc on commence à 1) et gamma (entre 0 et 1 donc on prend 0.5)   
   chain <- matrix(NA, nchain + 1, 4)
   chain[1,] <- init
   acc_rates <- rep(0, 4)
   
-  valeur_extreme_params =cbind(c(1,1, 0.01,0),c(10^5,10^5,10^5,1 ))
+  valeur_extreme_params =cbind(c(1+10^(-7),1+10^(-7), 10^(-7),10^(-7)),c(10^7,10^7,10^7,1-10^(-7) ))
   
   
   for (iter in 1:nchain){
@@ -136,8 +134,8 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
       top_kernel <- dtruncnorm(current[j], a=valeur_extreme_params[j,1] , b=valeur_extreme_params[j,2] , prop[j], prop_sd[j]) #on a pas un noyau symetrique !
       
       
-      top <-   sum( 0.5*log(prop[3]) - 0.5*(length - prop[1] - prop[2]*prop[4]^age)^2 * prop[3] ) + top_kernel
-      bottom <-  sum( 0.5*log(current[3]) - 0.5*(length -current[1] - current[2]*current[4]^age)^2 *current[3]) + bottom_kernel
+      top <-   sum( 0.5*log(prop[3]) - 0.5*(length - prop[1] - prop[2]*prop[4]^age)^2 * prop[3] ) + log(top_kernel)
+      bottom <-  sum( 0.5*log(current[3]) - 0.5*(length -current[1] - current[2]*current[4]^age)^2 *current[3]) + log(bottom_kernel)
       acc_prob <- exp(top - bottom)
       
 
@@ -161,22 +159,53 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
 
 
 nchain=10000
-CM_params <- dugong(x, Y, nchain )
-
-head(CM_params$chain,5)
-CM_params$acc_rates
+CM_params <- dugong(X, Y, nchain )
 
 
 #CM_params
-## to do remove burning period
-
-
+## remove burning period
+CM_params$chain <- CM_params$chain[-(1:1000),]
+expression<-c('alpha','beta','tau','gamma')
 #plot
 for (j in 1:4)
-  plot(CM_params$chain[,j], type = "l", ylab = j)
+  plot(CM_params$chain[,j], type = "l", ylab = expression[j])
+
 
 
 ```
+```{r}
+head(CM_params$chain,5)
+
+```
+
+
+```{r}
+#le taux d'acceaptation
+CM_params$acc_rates
+```
+
+
+```{r}
+
+#on trace les densité 
+par(mfrow = c(1, 2), mar = c(4, 5, 0.5, 0.5))
+
+for (j in 1:4)
+  plot(density(CM_params$chain[,j]), type = "l", ylab = expression[j])
+
+
+```
+```{r}
+#on trace les densité 
+par(mfrow = c(1, 2), mar = c(4, 5, 0.5, 0.5))
+print(density(CM_params$chain[,2]))
+
+```
+```{r}
+
+
+```
+
 
 ## Sources
 

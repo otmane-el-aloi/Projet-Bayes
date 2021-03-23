@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
-install.packages("truncnorm")
+#install.packages("truncnorm")
 library(truncnorm)
 ```
 
@@ -161,7 +161,7 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
 
 
 nchain=10000
-CM_params <- dugong(x, Y, nchain )
+CM_params <- dugong(X, Y, nchain )
 
 head(CM_params$chain,5)
 CM_params$acc_rates

@@ -40,10 +40,9 @@ ggplot(data,mapping = aes(X,Y))+
 
 On remarque que l'evolution de la longeur ("The growth") est non linéaire, et tend vers une valeur constante, ainsi on a choisi pour modèle de dépendance entre X(l'age) et Y(la longeur) un modèle de régression non linéaire appelé (asymptotic regression model) on trouve dans la littérature d'autres modèles similaire pour modéliser les courbes d'évolution :
 
--   modified exponential (Stevens (1951), c'est le type de modèle employé essayé)
-$$
-\mathbb{E}(Y)=\alpha-\beta^{X}
-$$
+-   modified exponential (Stevens (1951), c'est le type de modèle employé essayé) $$
+    \mathbb{E}(Y)=\alpha-\beta^{X}
+    $$
 
 -   logistic (von Bertalanffy (1957) )
 
@@ -54,91 +53,102 @@ y <- density(data$Y)
 plot(y)
 ```
 
-En faisant l'estimation non paramétriques de la densité des valeurs de Y on retrouve une densité qui laisse penser qu'on a affaire à une somme de densité normale, d'où le choix de la modélisation suivante:
-$$
+En faisant l'estimation non paramétriques de la densité des valeurs de Y on retrouve une densité qui laisse penser qu'on a affaire à une somme de densité normale, d'où le choix de la modélisation suivante: $$
 Y_{i} \sim \operatorname{Normal}\left(\mu_{i}, \tau\right), \quad i=1, \ldots, 27$$
-
 
 $$\mu_{i}=\alpha-\beta \gamma^{X} \quad \alpha, \beta>1 ; 0<\gamma<1
 $$
 
+Ainsi pour des grandes valeurs de X (l'age) la moyenne est presque inchangé vu que \$ \gama \$ est inférieur à 1, ce qui est cohérant parceque les dugongs les plus agés ont presque la même longeur qui tourne autour de 2.5 alors que les moins agés ont une logueur qui tourne autour de 1.7.
 
+\#\# Calculs
 
-## Calculs
 $$
 \pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\alpha)
 \\
-\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{-1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]\times \pi(\alpha)
 \\
-\pi(\alpha \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
-
+\pi(\alpha \mid \ldots) \propto  \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}\times \mathbb{1_{[1,+\infty[}{\alpha}}
 $$
+
 $$
 \pi(\beta \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\beta)
 \\
-\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{-1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]\times \pi(\beta)
 \\
-\pi(\beta \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
-
+\pi(\beta \mid \ldots) \propto \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}\times \mathbb{1_{[1,+\infty[}{\beta}}
 $$
+
 $$
 \pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\gamma)
 \\
-\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{-1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right] \times \pi(\gamma)
 \\
-\pi(\gamma \mid \ldots) \propto  e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
+\pi(\gamma \mid \ldots) \propto \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}\times \mathbb{1_{]0,1[}{\gamma}}
+$$
 
 $$
-$$
-\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\gamma)
+\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\tau)
 \\
-\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n}\left[\frac{1}{\sqrt{\tau}} e^{-\frac{\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]
+\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{\frac{-1}{2}}e^{-\tau\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2}}\right]
 \\
-\pi(\tau \mid \ldots) \propto  \tau^{-\frac{n}{2}}e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha-\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
-
-
-
+\pi(\tau \mid \ldots) \propto  \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
 $$
+
 ## Codes:
-
 
 ```{r}
 
 
-dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
+dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.5,0.009)){
 
-  init <- c(3, 2, 1, 0.1)  #alpha, beta (alpha et beta superieur à 1), tau (standard deviation donc on commence à 1) et gamma (entre 0 et 1 donc on prend 0.5)   
+  init <- c(2.5, 0.9, 0.1, 0.9)  #alpha, beta (alpha et beta superieur à 1), tau (standard deviation donc on commence à 1) et gamma (entre 0 et 1 donc on prend 0.5)   
   chain <- matrix(NA, nchain + 1, 4)
   chain[1,] <- init
   acc_rates <- rep(0, 4)
-  
-  valeur_extreme_params =cbind(c(1,1, 0.01,0),c(10^5,10^5,10^5,1 ))
-  
-  
+  n<-length(Y)
+  sig<-1000#ecart type
   for (iter in 1:nchain){
     current <- chain[iter,]
-
     
-    ## Mise a jour de alpha, beta, tau et gamma (ils suivent la même loi a priori )
+    ## Mise a jour de alpha, beta, tau et gamma 
     
     for (j in 1:4){
-
-      
+      if(j<3){
       prop <- current
-      prop[j] <- rtruncnorm(1, a=valeur_extreme_params[j,1] , b=valeur_extreme_params[j,2] , current[j], prop_sd[j])
-      bottom_kernel <- dtruncnorm(prop[j], a=valeur_extreme_params[j,1] , b=valeur_extreme_params[j,2] , current[j], prop_sd[j])  #on a pas un noyau symetrique !
-      top_kernel <- dtruncnorm(current[j], a=valeur_extreme_params[j,1] , b=valeur_extreme_params[j,2] , prop[j], prop_sd[j]) #on a pas un noyau symetrique !
+      prop[j] <- rlnorm(1 ,meanlog = log(current[j]),prop_sd[j])
+      kernel.ratio<-(prop[j]/current[j])
+      #loi normle comme loi à priori
+      top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) +dnorm(prop[j],0,sig,log=TRUE)
+      
+      bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3]))+dnorm(current[j],0,sig,log=TRUE) }
+      else if(j<4){
+       prop <- current
+      prop[j] <- rlnorm(1 ,meanlog = log(current[j]),prop_sd[j])
+      kernel.ratio<-(prop[j]/current[j])
+      #loi normle comme loi à priori
+      top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) +dinvgamma(prop[j],0.001,rate=1000,log=TRUE)
+      
+      bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3]))+dinvgamma(current[j],0.001,rate=1000,log=TRUE)     
+        
+      }else{
+         
+        prop[j] <- rtruncnorm(1, a=0 , b=1 , current[j], prop_sd[j])
+        bottom_kernel <- dtruncnorm(prop[j], a=0 , b=1 , current[j], prop_sd[j])  #on a pas un noyau symetrique !
+        top_kernel <- dtruncnorm(current[j], a=0 , b=1 , prop[j], prop_sd[j]) #on a pas un noyau symetrique !
+         kernel.ratio<-(top_kernel/bottom_kernel)
+      #loi normle comme loi à priori
+      top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) +dunif(prop[j],min=0,max=1,log=TRUE)
+      
+      bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3]))+dunif(current[j],min=0,max=1,log=TRUE)
+        
+        
+        
+      }
       
       
-      top <-   sum( 0.5*log(prop[3]) - 0.5*(length - prop[1] - prop[2]*prop[4]^age)^2 * prop[3] ) + top_kernel
-      bottom <-  sum( 0.5*log(current[3]) - 0.5*(length -current[1] - current[2]*current[4]^age)^2 *current[3]) + bottom_kernel
-      acc_prob <- exp(top - bottom)
+      
+      acc_prob <- exp(top - bottom)*kernel.ratio
       
 
       if (runif(1) < acc_prob){
@@ -147,10 +157,7 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
       }
     }
     
-    
-    
-    
-    
+
     
     ## Sauvegardons le nouvel etat
     chain[iter+1,] <- current
@@ -163,17 +170,60 @@ dugong <- function(age, length, nchain = 10^4, prop_sd = c(0.5,1,2,0.2)){
 nchain=10000
 CM_params <- dugong(X, Y, nchain )
 
-head(CM_params$chain,5)
-CM_params$acc_rates
-
 
 #CM_params
-## to do remove burning period
-
-
+## remove burning period
+CM_params$chain <- CM_params$chain[-(1:1000),]
+expression<-c('alpha','beta','tau','gamma')
 #plot
 for (j in 1:4)
-  plot(CM_params$chain[,j], type = "l", ylab = j)
+  plot(CM_params$chain[,j], type = "l", ylab = expression[j])
+
+
+
+```
+
+```{r}
+#le taux d'acceaptation
+CM_params$acc_rates
+
+```
+
+```{r}
+#ACP
+
+acp(CM_params$chain )
+
+```
+
+```{r}
+tail(CM_params$chain,5)
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+#on trace les densité 
+par(mfrow = c(1, 2), mar = c(4, 5, 0.5, 0.5))
+
+for (j in 1:4)
+  plot(density(CM_params$chain[,j]), type = "l", ylab = expression[j])
+
+
+```
+
+```{r}
+#on trace les densité 
+par(mfrow = c(1, 2), mar = c(4, 5, 0.5, 0.5))
+density(CM_params$chain[,2])
+
+```
+
+```{r}
 
 
 ```

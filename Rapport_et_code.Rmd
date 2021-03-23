@@ -9,7 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 #install.packages("truncnorm")
+#install.packages("invgamma")
+library(invgamma)
 library(truncnorm)
+library(acp)
 ```
 
 ## Présentation des données:
@@ -114,6 +117,7 @@ dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.5,0.009)){
     ## Mise a jour de alpha, beta, tau et gamma 
     
     for (j in 1:4){
+      
       if(j<3){
       prop <- current
       prop[j] <- rlnorm(1 ,meanlog = log(current[j]),prop_sd[j])
@@ -122,7 +126,9 @@ dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.5,0.009)){
       top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) +dnorm(prop[j],0,sig,log=TRUE)
       
       bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3]))+dnorm(current[j],0,sig,log=TRUE) }
+      
       else if(j<4){
+        
        prop <- current
       prop[j] <- rlnorm(1 ,meanlog = log(current[j]),prop_sd[j])
       kernel.ratio<-(prop[j]/current[j])
@@ -192,9 +198,11 @@ CM_params$acc_rates
 ```{r}
 #ACP
 
-acp(CM_params$chain )
+#acp(CM_params$chain )
 
 ```
+
+
 
 ```{r}
 tail(CM_params$chain,5)

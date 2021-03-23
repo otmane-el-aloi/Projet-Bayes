@@ -107,21 +107,47 @@ dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.5,0.009)){
   chain[1,] <- init
   acc_rates <- rep(0, 4)
   n<-length(Y)
-  
+  sig<-1000#ecart type
   for (iter in 1:nchain){
     current <- chain[iter,]
     
     ## Mise a jour de alpha, beta, tau et gamma 
     
     for (j in 1:4){
-      
+      if(j<3){
       prop <- current
       prop[j] <- rlnorm(1 ,meanlog = log(current[j]),prop_sd[j])
       kernel.ratio<-(prop[j]/current[j])
+      #loi normle comme loi à priori
+      top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) +dnorm(prop[j],0,sig,log=TRUE)
       
-      top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) 
+      bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3]))+dnorm(current[j],0,sig,log=TRUE) }
+      else if(j<4){
+       prop <- current
+      prop[j] <- rlnorm(1 ,meanlog = log(current[j]),prop_sd[j])
+      kernel.ratio<-(prop[j]/current[j])
+      #loi normle comme loi à priori
+      top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) +dinvgamma(prop[j],0.001,rate=1000,log=TRUE)
       
-      bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3])) 
+      bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3]))+dinvgamma(current[j],0.001,rate=1000,log=TRUE)     
+        
+      }else{
+         
+        prop[j] <- rtruncnorm(1, a=0 , b=1 , current[j], prop_sd[j])
+        bottom_kernel <- dtruncnorm(prop[j], a=0 , b=1 , current[j], prop_sd[j])  #on a pas un noyau symetrique !
+        top_kernel <- dtruncnorm(current[j], a=0 , b=1 , prop[j], prop_sd[j]) #on a pas un noyau symetrique !
+         kernel.ratio<-(top_kernel/bottom_kernel)
+      #loi normle comme loi à priori
+      top <- -(n/2)*log(prop[3]) - sum((Y - prop[1] - prop[2]*prop[4]^age)^2)*(1/(2*prop[3])) +dunif(prop[j],min=0,max=1,log=TRUE)
+      
+      bottom <- -(n/2)*log(current[3]) - sum((Y - current[1] - current[2]*current[4]^age)^2)*(1/(2*current[3]))+dunif(current[j],min=0,max=1,log=TRUE)
+        
+        
+        
+      }
+      
+      
+      
       acc_prob <- exp(top - bottom)*kernel.ratio
       
 

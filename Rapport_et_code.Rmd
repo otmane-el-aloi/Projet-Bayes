@@ -12,7 +12,7 @@ library(ggplot2)
 #install.packages("invgamma")
 library(invgamma)
 library(truncnorm)
-library(acp)
+# library(acp)
 ```
 
 ## Présentation des données:
@@ -103,9 +103,9 @@ $$
 ```{r}
 
 
-dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.01,0.03)){
+dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.1,1,1,1)){
 
-  init <- c(2.5, 0.9, 100, 0.9)  #alpha, beta (alpha et beta superieur à 1), tau (standard deviation donc on commence à 1) et gamma (entre 0 et 1 donc on prend 0.5)   
+  init <- c(1,1,1,0.9)  #alpha, beta (alpha et beta superieur à 1), tau (standard deviation donc on commence à 1) et gamma (entre 0 et 1 donc on prend 0.5)   
   chain <- matrix(NA, nchain + 1, 4)
   chain[1,] <- init
   acc_rates <- rep(0, 4)
@@ -120,11 +120,9 @@ dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.01,0.03)){
       prop <- current
       prop[j] <- rlnorm(1 ,meanlog = log(current[j]),prop_sd[j])
       kernel.ratio<-(prop[j]/current[j])
-      
-      #Top de alpha 
-      top <- (n/2)*log(prop[3]) - sum(((Y - prop[1] - prop[2]*prop[4]^age)^2)*1/2               *prop[3]) +dnorm(prop[j],0,sig,log=TRUE)
+      top<-sum(dnorm(Y,prop[1] + prop[2]*prop[4]^age,1/sqrt(prop[3]),log=TRUE))+dnorm(prop[j],0,sig,log=TRUE)
       #Bottom 
-      bottom <- (n/2)*log(current[3]) - sum(((Y - current[1] - current[2]                      *current[4]^age)^2)*1/2*current[3])+dnorm(current[j],0,sig,log=TRUE)
+      bottom <- sum(dnorm(Y,current[1] + current[2]*current[4]^age,1/sqrt(current[3]),log=TRUE))+dnorm(current[j],0,sig,log=TRUE)
       #Alpha
       acc_prob <- exp(top - bottom)*kernel.ratio
       
@@ -139,15 +137,13 @@ dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.01,0.03)){
     ## Mise à jour de tau   
       prop <- current
       prop[3] <- rlnorm(1 ,meanlog = log(current[3]),prop_sd[3])
+     
       kernel.ratio<-(prop[3]/current[3])
       
       #Top
-      top <- (n/2)*log(prop[3]) - sum(((Y - prop[1] - prop[2]*prop[4]^age)^2)*1/2                *prop[3]) +dgamma(prop[3],0.001,rate=0.001,log=TRUE)
-      #Bottom
-      bottom <- (n/2)*log(current[3]) - sum(((Y - current[1] - current[2]                           *current[4]^age)^2)*1/2*current[3])
-                +dgamma(current[3],0.001,rate=0.001,log=TRUE)   
+      top <- sum(dnorm(Y,prop[1] + prop[2]*prop[4]^age,1/sqrt(prop[3]),log=TRUE))+dgamma(prop[3],0.001,rate=0.001,log=TRUE)
+      bottom <-sum(dnorm(Y,current[1] + current[2]*current[4]^age,1/sqrt(current[3]),log=TRUE))+dgamma(current[3],0.001,rate=0.001,log=TRUE)   
       
-      #Alpha
       acc_prob <- exp(top - bottom)*kernel.ratio
       
       if (runif(1) < acc_prob){
@@ -157,22 +153,15 @@ dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.08,0.06,0.01,0.03)){
 
    ### Mise à jour de gamma
       prop <- current
-      prop[4] <- rtruncnorm(1, a=0 , b=1 , current[4], prop_sd[4])
-      top_kernel <- dtruncnorm(current[4], a=0 , b=1 , prop[4], prop_sd[4]) 
-      bottom_kernel <- dtruncnorm(prop[4], a=0 , b=1 , current[4], prop_sd[4])    
-      
-      #on a pas un noyau symetrique !
-      kernel.ratio<-(top_kernel/bottom_kernel)
-      
-      #top
-      top <- (n/2)*log(prop[3]) - sum(((Y - prop[1] - prop[2]*prop[4]^age)^2)*1/2                *prop[3]) +dunif(prop[4],min=0,max=1,log=TRUE)
-      
-      bottom <- (n/2)*log(current[3]) - sum(((Y - current[1] - current[2]                        *current[4]^age)^2)*1/2*current[3])+
-               dunif(current[4],min=0,max=1,log=TRUE)
+      prop[4] <- rlnorm(1, meanlog = log(current[4]), prop_sd[4])
+     
+      kernel.ratio<-(prop[4]/current[4])
+      top <-sum(dnorm(Y,prop[1] + prop[2]*prop[4]^age,1/sqrt(prop[3]),log=TRUE))+dunif(prop[4],min=0.5,max=1,log=TRUE)
+      bottom <- sum(dnorm(Y,current[1] + current[2]*current[4]^age,1/sqrt(current[3]),log=TRUE))+dunif(current[4],min=0.5,max=1,log=TRUE)
       #Alpha
       acc_prob <- exp(top - bottom)*kernel.ratio
-      
-      if (runif(1) < acc_prob){
+    
+      if ((runif(1) < acc_prob)&(prop[4]<1)){
               current <- prop
               acc_rates[4] <- acc_rates[4] + 1
              } 

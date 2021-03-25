@@ -69,33 +69,39 @@ Ainsi pour des grandes valeurs de X (l'age) la moyenne est presque inchangé vu 
 $$
 \pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\alpha)
 \\
-\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{-1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]\times \pi(\alpha)
+\pi(\alpha \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau}{2}}\right]\times \pi(\alpha)
 \\
-\pi(\alpha \mid \ldots) \propto  \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}\times \mathbb{1_{[1,+\infty[}{\alpha}}
+\\ \text{avec }\pi(\alpha) \propto e^ \left(-\frac{\alpha^{2}.10^{-6}}{2}\right) 
+\\
+\pi(\alpha \mid \ldots) \propto  \tau^{n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau\right]}{2}}\times {e^ \left(-\frac{\alpha^{2}.10^{-6}}{2}\right) }
 $$
 
 $$
 \pi(\beta \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\beta)
 \\
-\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{-1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right]\times \pi(\beta)
+\pi(\beta \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau}{2}}\right]\times \pi(\beta)
+\\ \text{avec }\pi(\beta) \propto e^ \left(-\frac{\beta^{2}.10^{-6}}{2}\right) 
 \\
-\pi(\beta \mid \ldots) \propto \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}\times \mathbb{1_{[1,+\infty[}{\beta}}
+\pi(\beta \mid \ldots) \propto \tau^{n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau\right]}{2}}\times e^ \left(-\frac{\beta^{2}.10^{-6}}{2}\right) 
 $$
 
 $$
 \pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\gamma)
 \\
-\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{-1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2\tau}}\right] \times \pi(\gamma)
+\pi(\gamma \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau}{2}}\right] \times \pi(\gamma)
 \\
-\pi(\gamma \mid \ldots) \propto \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}\times \mathbb{1_{]0,1[}{\gamma}}
+\pi(\gamma \mid \ldots) \propto \tau^{n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau\right]}{2}}\times \mathbb{1_{]0,1[}{\gamma}}
 $$
 
 $$
 \pi(\tau \mid \ldots) \propto \prod_{i=1}^{n} \pi\left(y_{i} \mid \alpha, \beta, \gamma, \tau\right) \times \pi(\tau)
 \\
-\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{\frac{-1}{2}}e^{-\tau\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}}{2}}\right]
+\text{avec }\pi(\tau)\,\sim \Gamma (0.001,0.001 )
 \\
-\pi(\tau \mid \ldots) \propto  \tau^{-n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\right]}{2\tau}}
+\pi(\tau \mid \ldots) \propto \prod_{i=1}^{n}\left[\tau^{1/2}e^{-\frac{\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau}{2}}\right] \times \frac{1}{\tau}\times \mathbb{1_{[0,+\infty[}{\tau}}
+\\
+\\
+\pi(\tau \mid \ldots) \propto  \tau^{n/2}\times e^{-\frac{\sum_{i=1}^{n}\left[\left(Y_{i}-\alpha+\beta\gamma^{x_{i}}\right)^{2}\tau\right]}{2}}\times \frac{1}{\tau}\times \mathbb{1_{[0,+\infty[}{\tau}}e
 $$
 
 ## Codes:

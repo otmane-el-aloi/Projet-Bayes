@@ -128,7 +128,7 @@ dugong <- function(age, Y, nchain = 10^4, prop_sd = c(0.1,1,1,1)){
       kernel.ratio<-(prop[j]/current[j])
       top<-sum(dnorm(Y,prop[1] + prop[2]*prop[4]^age,1/sqrt(prop[3]),log=TRUE))+dnorm(prop[j],0,sig,log=TRUE)
       #Bottom 
-      bottom <- sum(dnorm(Y,current[1] + current[2]*current[4]^age,1/sqrt(current[3]),log=TRUE))+dnorm(current[j],0,sig,log=TRUE)
+      bottom <- sum(dnorm(Y,current[1] +current[2]*current[4]^age,1/sqrt(current[3]),log=TRUE))+dnorm(current[j],0,sig,log=TRUE)
       #Alpha
       acc_prob <- exp(top - bottom)*kernel.ratio
       
